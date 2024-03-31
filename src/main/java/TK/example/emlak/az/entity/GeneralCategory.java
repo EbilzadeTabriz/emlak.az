@@ -11,10 +11,11 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "General_Category")
+//silinecek bunlar
 public class GeneralCategory {
 
 
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Id
         Long id;
         @Column(nullable = false)

@@ -10,8 +10,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @Table(name = "Rooms")
+
+//silinecek bunlar
 public class OtaqSayiCatagory {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long id;
     @Column(nullable = true)
@@ -28,7 +30,7 @@ public class OtaqSayiCatagory {
     @Column(nullable = true)
 
     Long besVeDahaCox;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL ,fetch = FetchType.EAGER)
     @JoinColumn(name = "emlak_id")
     private Emlak emlak;
 }

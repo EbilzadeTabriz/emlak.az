@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Table(name = "emlak")
 public class Emlak {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long emlakId;
     @Column(nullable = true)
@@ -55,7 +55,7 @@ public class Emlak {
     @JoinColumn(name = "emlak_tipi_id")
     private EmlakTipiCatagory emlakTipiCatagory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "generalCategory_id")
     private GeneralCategory generalCategory;
 

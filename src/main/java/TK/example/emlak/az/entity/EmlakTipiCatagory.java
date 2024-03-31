@@ -13,8 +13,9 @@ import java.util.List;
 @Entity
 @Data
 @Table(name = "EmlakKatagoriyasi")
+//silinecek bunlar
 public class EmlakTipiCatagory {
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long emlakTipiID;
 
