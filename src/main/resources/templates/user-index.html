@@ -64,7 +64,7 @@
   <div class="row">
     <h1>List of Users</h1>
     <br/>
-    <table class="table table-striped table-hover table-bordered table-primary">
+    <table class="table table-striped table-hover table-bordered table-primary table-responsive">
       <thead>
       <tr>
         <th>Firstname</th>
@@ -81,9 +81,9 @@
         <td th:text="${userDto.password}"></td>
         <td th:text="${userDto.number}"></td>
         <td>
-          <a class="btn btn-primary" th:href="@{/{userId}/edit(userId=${userDto.id})}">Edit</a>
+          <a class="btn btn-primary" th:href="@{user/{userId}/edit(userId=${userDto.id})}">Edit</a>
           <a class="btn btn-danger" th:href="@{user/{userId}/delete(userId=${userDto.id})}">Delete</a>
-          <a class="btn btn-warning" th:href="@{/{userId}/view(userId=${userDto.id})}">View</a>
+          <a class="btn btn-warning" th:href="@{user/{userId}/view(userId=${userDto.id})}">View</a>
         </td>
       </tr>
       </tbody>

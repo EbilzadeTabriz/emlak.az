@@ -2,6 +2,7 @@ package TK.example.emlak.az.manager;
 
 import TK.example.emlak.az.dto.EmlakDto;
 import TK.example.emlak.az.entity.Emlak;
+import TK.example.emlak.az.exception.NotFoundByMertebe;
 import TK.example.emlak.az.mapper.EmlakMapper;
 import TK.example.emlak.az.repository.EmlakRepository;
 import TK.example.emlak.az.service.EmlakService;
@@ -93,10 +94,20 @@ public class EmlakManager implements EmlakService {
 
     @Override
     public EmlakDto getByMertebe(Integer mertebe) {
+
         Optional<Emlak> emlakOptional = emlakRepository.findByMertebe(mertebe);
 
-        return emlakOptional.map(emlakMapper::toEmlakDto).orElse(null);
+
+        if (emlakOptional.isPresent()) {
+            Emlak emlak = emlakOptional.get();
+            return emlakMapper.toEmlakDto(emlak);
+        } else {
+            throw new NotFoundByMertebe("Could not find any info...");
+        }
+
+
     }
+
 
     @Override
     public void deleteEmlakById(Long id) {
@@ -112,27 +123,25 @@ public class EmlakManager implements EmlakService {
 
     @Override
     public EmlakDto updateInfo(EmlakDto emlakDto, Long id) {
+
+
         Optional<Emlak> emlakOptional = emlakRepository.findById(id);
         if (emlakOptional.isPresent()) {
             Emlak existing = emlakOptional.get();
             existing.setInfo(emlakDto.info());
-            existing.setCixaris(emlakDto.cixaris());
-            existing.setMuqavile(emlakDto.muqavile());
             existing.setLocation(emlakDto.location());
             existing.setMertebe(emlakDto.mertebe());
             existing.setArea(emlakDto.area());
             existing.setPrice(emlakDto.price());
-            existing.setTipi(emlakDto.tipi());
             existing.setOtaqSayi(emlakDto.otaqSayi());
             existing.setForSelling(emlakDto.forSelling());
             existing.setForRent(emlakDto.forRent());
             emlakRepository.save(existing);
-            return emlakMapper.toEmlakDto(existing);
 
-        } else {
-            return null;
         }
+        return emlakDto;
     }
+
 
     @Override
     public void saveInfo(EmlakDto emlakDto) {
@@ -155,7 +164,7 @@ public class EmlakManager implements EmlakService {
     }
 
     @Override
-    public List<EmlakDto> getEmlakByPriceRange(Double minPrice, Double maxPrice) {
+    public List<EmlakDto> getEmlakBetweenMinAndMax(Double minPrice, Double maxPrice) {
         List<Emlak> emlakList = emlakRepository.findByPriceBetween(minPrice, maxPrice);
         return emlakList.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
     }
@@ -165,30 +174,6 @@ public class EmlakManager implements EmlakService {
         Optional<Emlak> emlakOptional = emlakRepository.findByLocation(location);
         return emlakOptional.map(emlakMapper::toEmlakDto).orElse(null);
 
-}
-    @Override
-    public Boolean existsCixaris(Boolean cixaris) {
-        Optional<EmlakDto> optional = emlakRepository.findByCixaris(cixaris);
-        if (optional.equals(cixaris)) {
-            System.out.println("There is a cixaris");
-            return true;
-
-        } else {
-            System.out.println("Here is empty");
-            return false;
-        }
-    }
-
-    @Override
-    public Boolean existInMuqavile(Boolean muqavile) {
-        Optional<EmlakDto> optional = emlakRepository.findByMuqavile(muqavile);
-        if (optional.equals(muqavile)) {
-            System.out.println("There is a muqavile!");
-            return true;
-        } else {
-            System.out.println("There is no muqavile");
-            return false;
-        }
     }
 
 

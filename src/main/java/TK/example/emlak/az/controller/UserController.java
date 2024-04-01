@@ -2,6 +2,7 @@ package TK.example.emlak.az.controller;
 
 
 import TK.example.emlak.az.dto.UserDto;
+import TK.example.emlak.az.entity.User;
 import TK.example.emlak.az.manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -54,4 +55,33 @@ public class UserController {
         return "redirect:/users";
 
     }
+    @GetMapping("/users/home")
+    public String userHome(){
+        return "redirect:/users";
+    }
+    @GetMapping("user/{userId}/edit")
+    public String editUser(@PathVariable("userId") Long id,Model model){
+        UserDto userDto = manager.getById(id);
+        model.addAttribute("userDto",userDto);
+        return "edit-user";
+    }
+    @PostMapping("user/{userId}")
+    public String updateUser(@PathVariable("userId") Long id,
+                             @ModelAttribute("users") UserDto userDto,
+                             BindingResult bindingResult,
+                             Model model){
+
+        if (bindingResult.hasErrors()){
+            model.addAttribute("users",userDto);
+            return "edit-user";
+        }
+        return "redirect:/users";
+    }
+    @GetMapping("user/{userId}/view")
+    public String userView(@PathVariable("userId") Long id,Model model){
+        UserDto userDto = manager.getById(id);
+        model.addAttribute("userDto",userDto);
+        return "user-view";
+    }
+
 }

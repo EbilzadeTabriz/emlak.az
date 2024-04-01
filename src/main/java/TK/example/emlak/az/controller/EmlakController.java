@@ -107,7 +107,7 @@ public class EmlakController {
     public ResponseEntity<List<EmlakDto>> getEmlakByPriceRange(
             @PathVariable("minPrice") Double minPrice,
             @PathVariable("maxPrice") Double maxPrice) {
-      List<EmlakDto>  emlakDtoList = emlakManager.getEmlakByPriceRange(minPrice,maxPrice);
+      List<EmlakDto>  emlakDtoList = emlakManager.getEmlakBetweenMinAndMax(minPrice,maxPrice);
         if (!(emlakDtoList.isEmpty())){
             return ResponseEntity.status(HttpStatus.OK).body(emlakDtoList);
         }
@@ -123,16 +123,7 @@ public class EmlakController {
        EmlakDto emlakDto = emlakManager.getByLocation(location);
        return ResponseEntity.status(HttpStatus.OK).body(emlakDto);
     }
-    @PatchMapping("/existsCixaris")
-    public ResponseEntity<Boolean> existsCixaris(@RequestParam Boolean cixaris) {
-        Boolean emlak = emlakManager.existsCixaris(cixaris);
-        return ResponseEntity.status(HttpStatus.OK).body(emlak);
-    }
-    @PatchMapping("/existInMuqavile")
-    public ResponseEntity<Boolean> existInMuqavile(@RequestParam Boolean muqavile) {
-        Boolean emlak = emlakManager.existInMuqavile(muqavile);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(emlak);
-    }
+
 
 
 

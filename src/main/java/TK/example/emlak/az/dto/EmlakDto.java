@@ -1,17 +1,27 @@
 package TK.example.emlak.az.dto;
 
 
+import jakarta.persistence.Column;
+
 public record EmlakDto(
         Double price,
-        String tipi,
+
+        Boolean available,
+        String emlakTipi,
         String info,
+
+        String location,
+        String approvedDocument,
+        Double area,
+
+        Integer mertebe,
+
+        Integer otaqSayi,
         String forRent,
         String forSelling,
-        Boolean cixaris,
-        Boolean muqavile,
-        String location,
-        Double area,
-        Integer mertebe,
-        Integer otaqSayi
-) {
+
+
+        String emlakDurumu
+
+        ) {
 }

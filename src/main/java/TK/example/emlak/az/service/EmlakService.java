@@ -33,13 +33,12 @@ public interface EmlakService {
     @Transactional
     Boolean availableInSelling(Long id);
 
-    List<EmlakDto> getEmlakByPriceRange(Double minPrice, Double maxPrice);
+    List<EmlakDto> getEmlakBetweenMinAndMax(Double minPrice, Double maxPrice);
 
     EmlakDto getByLocation(String location);
 
-    Boolean existsCixaris(Boolean cixaris);
 
-    Boolean existInMuqavile(Boolean muqavile);
+
 
 
 

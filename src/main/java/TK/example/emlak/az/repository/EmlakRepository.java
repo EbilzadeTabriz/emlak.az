@@ -18,11 +18,11 @@ public interface EmlakRepository extends JpaRepository<Emlak, Long> {
     Optional<Emlak> findByLocation(String location);
 //    Optional<Emlak> findAllByLocationInOrderByLocation(List<String> location);
 
-    Optional<EmlakDto> findByCixaris(Boolean cixaris);
 
-    Optional<EmlakDto> findByMuqavile(Boolean muqavile);
     Optional<Emlak> findByAreaGreaterThanEqualOrderByAreaAsc(Double area);
+
     Optional<Emlak> findByForSelling(String forSelling);
+
     Optional<Emlak> findByForRent(String forRent);
 
 }

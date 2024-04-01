@@ -23,18 +23,14 @@ public class Emlak {
     @Column(nullable = true)
     Boolean available;
     @Column(nullable = true)
-    String tipi;
-    @Column(nullable = true)
-
+    String emlakTipi;
+    @Column(columnDefinition = "TEXT")
     String info;
     @Column(nullable = true)
 
     String location;
     @Column(nullable = true)
-
-    Boolean cixaris;
-    @Column(nullable = true)
-    Boolean muqavile;
+    String approvedDocument;
     @Column(nullable = true)
     Double area;
     @Column(nullable = true)
@@ -48,15 +44,24 @@ public class Emlak {
     @Column(nullable = true)
     String forSelling;
 
-    @OneToMany(mappedBy = "emlak", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OtaqSayiCatagory> otaqSayiCatagory;
+
+    @Column(nullable = true)
+
+    String emlakDurumu;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "emlak_tipi_id")
-    private EmlakTipiCatagory emlakTipiCatagory;
+    @JoinColumn(name ="id")
+    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "generalCategory_id")
-    private GeneralCategory generalCategory;
+//    @OneToMany(mappedBy = "emlak", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+//    private List<OtaqSayiCatagory> otaqSayiCatagory;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "emlak_tipi_id")
+//    private EmlakTipiCatagory emlakTipiCatagory;
+//
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "generalCategory_id")
+//    private GeneralCategory generalCategory;
 
 }
