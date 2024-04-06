@@ -1,8 +1,8 @@
 package TK.example.emlak.az.repository;
 
-import TK.example.emlak.az.dto.EmlakDto;
 import TK.example.emlak.az.entity.Emlak;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,16 +13,17 @@ public interface EmlakRepository extends JpaRepository<Emlak, Long> {
 
     Optional<Emlak> findByMertebe(Integer mertebe);
 
-    List<Emlak> findByPriceBetween(Double minPrice, Double maxPrice);
+    Optional<Emlak> findByPriceBetween(Double minPrice, Double maxPrice);
 
-    Optional<Emlak> findByLocation(String location);
-//    Optional<Emlak> findAllByLocationInOrderByLocation(List<String> location);
+    @Query("SELECT e FROM Emlak e WHERE e.location = :location")
+    List<Emlak> findByLocation(String location);
 
+    @Query("SELECT e FROM Emlak e WHERE lower(e.forSelling)= lower(:forSelling)")
+    List<Emlak> findAllByForSelling(String forSelling);
 
-    Optional<Emlak> findByAreaGreaterThanEqualOrderByAreaAsc(Double area);
+    @Query("SELECT e FROM Emlak e WHERE lower(forRent) = lower(:forRent)")
+    List<Emlak> findAllByForRent(String forRent);
 
-    Optional<Emlak> findByForSelling(String forSelling);
-
-    Optional<Emlak> findByForRent(String forRent);
-
+    @Query("SELECT e FROM Emlak e WHERE e.area BETWEEN :minArea AND :maxArea")
+    List<Emlak> findByAreaBetween(Double minArea,Double maxArea);
 }

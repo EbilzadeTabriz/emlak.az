@@ -2,14 +2,15 @@ package TK.example.emlak.az.manager;
 
 import TK.example.emlak.az.dto.EmlakDto;
 import TK.example.emlak.az.entity.Emlak;
-import TK.example.emlak.az.exception.NotFoundByMertebe;
 import TK.example.emlak.az.mapper.EmlakMapper;
 import TK.example.emlak.az.repository.EmlakRepository;
 import TK.example.emlak.az.service.EmlakService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -18,116 +19,109 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class EmlakManager implements EmlakService {
+
     private final EmlakRepository emlakRepository;
     private final EmlakMapper emlakMapper;
 
+
     @Override
-    @GetMapping
+    @Transactional
     public List<EmlakDto> getAll() {
         List<Emlak> emlakDtoList = emlakRepository.findAll();
         return emlakDtoList.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+
     }
 
     @Override
-    public List<EmlakDto> sortByPriceHighToLow(Double descending) {
+    @Transactional
+    public List<EmlakDto> sortByPriceHighToLow() {
         List<Emlak> emlakList = emlakRepository.findAll();
         Comparator<EmlakDto> priceComparator = Comparator.comparingDouble(EmlakDto::price).reversed();
-        List<EmlakDto> sortedList = emlakList.stream().map(emlakMapper::toEmlakDto)
-                .sorted(priceComparator)
-                .collect(Collectors.toList());
+        List<EmlakDto> sortedList = emlakList.stream().map(emlakMapper::toEmlakDto).sorted(priceComparator)
+                .toList();
         return sortedList;
     }
 
     @Override
-    public List<EmlakDto> sortByPriceLowToHigh(Double ascending) {
+    @Transactional
+    public List<EmlakDto> sortByPriceLowToHigh() {
         List<Emlak> emlakList = emlakRepository.findAll();
         Comparator<EmlakDto> priceComparator = Comparator.comparingDouble(EmlakDto::price);
 
-        if (ascending != null && ascending > 0) {
-            priceComparator = priceComparator.reversed();
-        }
-        List<EmlakDto> sortedList = emlakList.stream().map(emlakMapper::toEmlakDto)
-                .sorted(priceComparator)
-                .collect(Collectors.toList());
+        List<EmlakDto> sortedList = emlakList.stream().map(emlakMapper::toEmlakDto).sorted(priceComparator).toList();
+
         return sortedList;
     }
 
     @Override
-    public List<EmlakDto> getAllEmlakFromSameLocation(List<String> location) {
-        List<Emlak> emlakList = emlakRepository.findAll();
-
-        return emlakList.stream().filter(emlak -> location.contains(emlak.getLocation()))
-                .map(emlakMapper::toEmlakDto)
-                .collect(Collectors.toList());
+    @Transactional
+    public List<EmlakDto> getEmlaksFromSameLocation(String location) {
+        List<Emlak> emlakOptional = emlakRepository.findByLocation(location);
+        return emlakOptional.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
     }
 
+
     @Override
+    @Transactional
     public List<EmlakDto> getByForSelling(String forSelling) {
-        Optional<Emlak> emlakOptional = emlakRepository.findByForSelling(forSelling);
-        return emlakOptional.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+        List<Emlak> findForSelling = emlakRepository.findAllByForSelling(forSelling);
+        return findForSelling.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+
     }
 
     @Override
+    @Transactional
     public List<EmlakDto> getByForRent(String forRent) {
-        Optional<Emlak> emlakOptional = emlakRepository.findByForRent(forRent);
-        return emlakOptional.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
-    }
-
-    @Override
-    public EmlakDto getEmlakById(Long id) {
-        Optional<Emlak> emlakOptional = emlakRepository.findById(id);
-
-        return emlakOptional.map(emlakMapper::toEmlakDto).orElse(null);
+        List<Emlak> findForRent = emlakRepository.findAllByForRent(forRent);
+        return findForRent.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
 
     }
 
     @Override
-    public EmlakDto getByArea(Double area) {
-        Optional<Emlak> emlakOptional = emlakRepository.findByAreaGreaterThanEqualOrderByAreaAsc(area);
-        if (emlakOptional.isPresent()) {
-            Emlak emlak = emlakOptional.get();
-            return emlakMapper.toEmlakDto(emlak);
+    @Transactional
+    public List<EmlakDto> getEmlakById(Long id) {
+        Optional<Emlak> findEmlak = emlakRepository.findById(id);
+        if (findEmlak.isPresent()) {
+            return findEmlak.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
         } else {
-            return null;
+            throw new RuntimeException("Problem is inside  public List<EmlakDto> getEmlakById(Long id)  ");
         }
     }
 
     @Override
-    public EmlakDto getByMertebe(Integer mertebe) {
+    @Transactional
+    public List<EmlakDto> getByAreaBetweenMinAndMax(Double minArea,Double maxArea) {
+        List<Emlak> findByArea = emlakRepository.findByAreaBetween(minArea,maxArea);
+        return findByArea.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+    }
 
-        Optional<Emlak> emlakOptional = emlakRepository.findByMertebe(mertebe);
-
-
-        if (emlakOptional.isPresent()) {
-            Emlak emlak = emlakOptional.get();
-            return emlakMapper.toEmlakDto(emlak);
-        } else {
-            throw new NotFoundByMertebe("Could not find any info...");
-        }
-
+    @Override
+    @Transactional
+    public List<EmlakDto> getByMertebe(Integer mertebe) {
+        Optional<Emlak> findByFlat = emlakRepository.findByMertebe(mertebe);
+        return findByFlat.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
 
     }
 
-
     @Override
+    @Transactional
     public void deleteEmlakById(Long id) {
         emlakRepository.deleteById(id);
 
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
         emlakRepository.deleteAll();
-
     }
 
     @Override
+    @Transactional
     public EmlakDto updateInfo(EmlakDto emlakDto, Long id) {
-
-
-        Optional<Emlak> emlakOptional = emlakRepository.findById(id);
-        if (emlakOptional.isPresent()) {
-            Emlak existing = emlakOptional.get();
+        Optional<Emlak> updates = emlakRepository.findById(id);
+        if (updates.isPresent()) {
+            Emlak existing = updates.get();
             existing.setInfo(emlakDto.info());
             existing.setLocation(emlakDto.location());
             existing.setMertebe(emlakDto.mertebe());
@@ -137,45 +131,41 @@ public class EmlakManager implements EmlakService {
             existing.setForSelling(emlakDto.forSelling());
             existing.setForRent(emlakDto.forRent());
             emlakRepository.save(existing);
-
         }
         return emlakDto;
     }
 
-
     @Override
+    @Transactional
     public void saveInfo(EmlakDto emlakDto) {
-        Emlak emlak = emlakMapper.toEmlak(emlakDto);
-        emlakRepository.save(emlak);
+        emlakRepository.save(emlakMapper.toEmlak(emlakDto));
+
+
     }
 
-    // do it again
     @Override
+    @Transactional
     public Boolean availableInSelling(Long id) {
-
-        Optional<Emlak> emlakOptional = emlakRepository.findById(id);
-        if (emlakOptional.isPresent()) {
-            System.out.println("Emlak with ID " + id + "  available.");
-            return true;
-        } else {
-            System.out.println("Emlak with ID " + id + " not available.");
-            return false;
-        }
+        Optional<Emlak> available = emlakRepository.findById(id);
+        return available.isPresent();
     }
 
     @Override
+    @Transactional
     public List<EmlakDto> getEmlakBetweenMinAndMax(Double minPrice, Double maxPrice) {
-        List<Emlak> emlakList = emlakRepository.findByPriceBetween(minPrice, maxPrice);
-        return emlakList.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+
+        Optional<Emlak> findBetweenMinAndMax = emlakRepository.findByPriceBetween(minPrice, maxPrice);
+        if ((minPrice != null && minPrice != 0) && (maxPrice != null && maxPrice != 0)) {
+            return findBetweenMinAndMax.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+        } else
+            findBetweenMinAndMax.isEmpty();
+        return null;
     }
 
     @Override
-    public EmlakDto getByLocation(String location) {
-        Optional<Emlak> emlakOptional = emlakRepository.findByLocation(location);
-        return emlakOptional.map(emlakMapper::toEmlakDto).orElse(null);
+    @Transactional
+    public List<EmlakDto> getByLocation(String location) {
 
+        return null;
     }
-
-
 }
-

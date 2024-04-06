@@ -1,8 +1,5 @@
 package TK.example.emlak.az.dto;
 
-
-import jakarta.persistence.Column;
-
 public record EmlakDto(
         Double price,
 

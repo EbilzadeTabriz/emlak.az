@@ -2,7 +2,6 @@ package TK.example.emlak.az.controller;
 
 
 import TK.example.emlak.az.dto.UserDto;
-import TK.example.emlak.az.entity.User;
 import TK.example.emlak.az.manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
