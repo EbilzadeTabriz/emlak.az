@@ -40,4 +40,5 @@ public class EmlakExceptionHandler {
                 return HttpStatus.INTERNAL_SERVER_ERROR;
         }
     }
+
 }

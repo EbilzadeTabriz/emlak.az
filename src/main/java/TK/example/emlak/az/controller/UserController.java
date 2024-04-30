@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -44,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public String saveUser(@ModelAttribute("user") UserDto userDto, Model model, BindingResult bindingResult) {
+    public String saveUser(@ModelAttribute("user") @Validated UserDto userDto, Model model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
 
             model.addAttribute("user", userDto);
@@ -54,32 +53,36 @@ public class UserController {
         return "redirect:/users";
 
     }
+
     @GetMapping("/users/home")
-    public String userHome(){
+    public String userHome() {
         return "redirect:/users";
     }
+
     @GetMapping("user/{userId}/edit")
-    public String editUser(@PathVariable("userId") Long id,Model model){
+    public String editUser(@PathVariable("userId") Long id, Model model) {
         UserDto userDto = manager.getById(id);
-        model.addAttribute("userDto",userDto);
+        model.addAttribute("userDto", userDto);
         return "edit-user";
     }
+
     @PostMapping("user/{userId}")
     public String updateUser(@PathVariable("userId") Long id,
                              @ModelAttribute("users") UserDto userDto,
                              BindingResult bindingResult,
-                             Model model){
+                             Model model) {
 
-        if (bindingResult.hasErrors()){
-            model.addAttribute("users",userDto);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("users", userDto);
             return "edit-user";
         }
         return "redirect:/users";
     }
+
     @GetMapping("user/{userId}/view")
-    public String userView(@PathVariable("userId") Long id,Model model){
+    public String userView(@PathVariable("userId") Long id, Model model) {
         UserDto userDto = manager.getById(id);
-        model.addAttribute("userDto",userDto);
+        model.addAttribute("userDto", userDto);
         return "user-view";
     }
 

@@ -1,11 +1,12 @@
 package TK.example.emlak.az.service;
 
 import TK.example.emlak.az.dto.EmlakDto;
+import TK.example.emlak.az.dto.EmlakPageResponse;
 
 import java.util.List;
 
 public interface EmlakService {
-    List<EmlakDto> getAll();
+    EmlakPageResponse getAll(int page, int count);
 
     List<EmlakDto> sortByPriceHighToLow();
 
@@ -24,10 +25,13 @@ public interface EmlakService {
     void deleteEmlakById(Long id);
 
     void deleteAll();
+    Long countOfEmlak(Long total);
 
     EmlakDto updateInfo(EmlakDto emlakDto, Long id);
 
     void saveInfo(EmlakDto emlakDto);
+    void saveAll(List<EmlakDto> emlakDto);
+    void updateAll(List<EmlakDto> emlakDto);
 
 
     Boolean availableInSelling(Long id);

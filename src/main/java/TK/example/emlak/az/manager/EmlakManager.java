@@ -1,24 +1,26 @@
 package TK.example.emlak.az.manager;
 
 import TK.example.emlak.az.dto.EmlakDto;
+import TK.example.emlak.az.dto.EmlakPageResponse;
 import TK.example.emlak.az.entity.Emlak;
 import TK.example.emlak.az.mapper.EmlakMapper;
 import TK.example.emlak.az.repository.EmlakRepository;
 import TK.example.emlak.az.service.EmlakService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class EmlakManager implements EmlakService {
+public
+class EmlakManager implements EmlakService {
 
     private final EmlakRepository emlakRepository;
     private final EmlakMapper emlakMapper;
@@ -26,10 +28,12 @@ public class EmlakManager implements EmlakService {
 
     @Override
     @Transactional
-    public List<EmlakDto> getAll() {
-        List<Emlak> emlakDtoList = emlakRepository.findAll();
-        return emlakDtoList.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
-
+    public EmlakPageResponse getAll(int page, int count) {
+        Page<Emlak> emlakPage = emlakRepository.findAll(PageRequest.of(page,count));
+        return new EmlakPageResponse(emlakPage.getContent().stream().map(emlakMapper::toEmlakDto).toList(),
+                emlakPage.getTotalElements(),
+                emlakPage.getTotalPages(),
+                emlakPage.hasNext());
     }
 
     @Override
@@ -90,15 +94,34 @@ public class EmlakManager implements EmlakService {
 
     @Override
     @Transactional
-    public List<EmlakDto> getByAreaBetweenMinAndMax(Double minArea,Double maxArea) {
-        List<Emlak> findByArea = emlakRepository.findByAreaBetween(minArea,maxArea);
-        return findByArea.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
+    public List<EmlakDto> getByAreaBetweenMinAndMax(Double minArea, Double maxArea) {
+        if (minArea == null || maxArea == null || minArea >= maxArea) {
+            return Collections.emptyList();
+        }
+
+        List<Emlak> findArea = emlakRepository.findByAreaBetween(minArea, maxArea);
+        if (findArea.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Comparator<EmlakDto> compare = Comparator.comparingDouble(EmlakDto::area);
+
+        List<EmlakDto> sortedList = findArea.stream()
+                .map(emlakMapper::toEmlakDto)
+                .sorted(compare)
+                .collect(Collectors.toList());
+
+        return sortedList;
     }
 
     @Override
     @Transactional
     public List<EmlakDto> getByMertebe(Integer mertebe) {
-        Optional<Emlak> findByFlat = emlakRepository.findByMertebe(mertebe);
+        if (mertebe == null && mertebe <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<Emlak> findByFlat = emlakRepository.findByMertebe(mertebe);
         return findByFlat.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
 
     }
@@ -117,24 +140,40 @@ public class EmlakManager implements EmlakService {
     }
 
     @Override
+    public Long countOfEmlak(Long total) {
+
+        return emlakRepository.countOfEmlak(total);
+    }
+
+    @Override
     @Transactional
     public EmlakDto updateInfo(EmlakDto emlakDto, Long id) {
         Optional<Emlak> updates = emlakRepository.findById(id);
         if (updates.isPresent()) {
             Emlak existing = updates.get();
-            existing.setInfo(emlakDto.info());
-            existing.setLocation(emlakDto.location());
-            existing.setMertebe(emlakDto.mertebe());
-            existing.setArea(emlakDto.area());
-            existing.setPrice(emlakDto.price());
-            existing.setOtaqSayi(emlakDto.otaqSayi());
-            existing.setForSelling(emlakDto.forSelling());
-            existing.setForRent(emlakDto.forRent());
-            emlakRepository.save(existing);
-        }
-        return emlakDto;
-    }
+            EmlakMapper.Instance.updateEmlakFromDto(emlakDto, existing);
+            existing = emlakRepository.save(existing);
 
+            return EmlakMapper.Instance.toEmlakDto(existing);
+        } else {
+           throw new EntityNotFoundException("Entity with this id " + id + " not found");
+        }
+
+//        Optional<Emlak> updates = emlakRepository.findById(id);
+//        if (updates.isPresent()) {
+//            Emlak existing = updates.get();
+//            existing.setInfo(emlakDto.info());
+//            existing.setLocation(emlakDto.location());
+//            existing.setMertebe(emlakDto.mertebe());
+//            existing.setArea(emlakDto.area());
+//            existing.setPrice(emlakDto.price());
+//            existing.setOtaqSayi(emlakDto.otaqSayi());
+//            existing.setForSelling(emlakDto.forSelling());
+//            existing.setForRent(emlakDto.forRent());
+//            emlakRepository.save(existing);
+//        }
+//        return emlakDto;
+    }
     @Override
     @Transactional
     public void saveInfo(EmlakDto emlakDto) {
@@ -142,6 +181,22 @@ public class EmlakManager implements EmlakService {
 
 
     }
+
+    @Override
+    public void saveAll(List<EmlakDto> emlakDto) {
+        List<Emlak> emlakList = emlakDto.stream().map(emlakMapper::toEmlak).collect(Collectors.toList());
+        emlakRepository.saveAll(emlakList);
+
+    }
+
+    @Override
+    @Transactional
+    public void updateAll(List<EmlakDto> emlakDto) {
+
+        List<Emlak> emlakList = emlakDto.stream().map(emlakMapper::toEmlak).collect(Collectors.toList());
+        emlakRepository.saveAll(emlakList);
+    }
+
 
     @Override
     @Transactional
@@ -154,7 +209,7 @@ public class EmlakManager implements EmlakService {
     @Transactional
     public List<EmlakDto> getEmlakBetweenMinAndMax(Double minPrice, Double maxPrice) {
 
-        Optional<Emlak> findBetweenMinAndMax = emlakRepository.findByPriceBetween(minPrice, maxPrice);
+        List<Emlak> findBetweenMinAndMax = emlakRepository.findByPriceBetween(minPrice, maxPrice);
         if ((minPrice != null && minPrice != 0) && (maxPrice != null && maxPrice != 0)) {
             return findBetweenMinAndMax.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
         } else
@@ -165,7 +220,7 @@ public class EmlakManager implements EmlakService {
     @Override
     @Transactional
     public List<EmlakDto> getByLocation(String location) {
-
-        return null;
+        List<Emlak> getLocation = emlakRepository.findByLocation(location);
+        return getLocation.stream().map(emlakMapper::toEmlakDto).collect(Collectors.toList());
     }
 }
