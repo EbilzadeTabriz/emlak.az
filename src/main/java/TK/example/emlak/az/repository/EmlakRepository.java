@@ -1,6 +1,5 @@
 package TK.example.emlak.az.repository;
 
-import TK.example.emlak.az.dto.EmlakDto;
 import TK.example.emlak.az.entity.Emlak;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -18,7 +18,7 @@ import java.util.List;
 public class EmlakController {
     private final EmlakManager emlakManager;
 
-    @GetMapping
+    @GetMapping("/getAll")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<EmlakPageResponse> getAll(@RequestParam(value = "page") int page, @RequestParam(value = "count") int count) {
         EmlakPageResponse getAll = emlakManager.getAll(page,count);
