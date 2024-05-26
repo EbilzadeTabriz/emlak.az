@@ -19,12 +19,11 @@ public class UserDto {
         String number;
         @NotEmpty(message = "Email əlavə edin!")
         @NotBlank(message = "Email də boşluq olmamalidir!")
-        @Size(max = 20, min = 18)
         @Email(message = " Email @gmail.com ilə bitməlidir!")
         String email;
         @NotEmpty(message = "Password əlavə edin!")
         @NotBlank(message = "Boşluq olmamalidir!")
-        @Size(min = 8, max = 12)
+        @Size(min = 5, max = 12)
         String password;
 }
 

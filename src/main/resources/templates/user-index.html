@@ -64,30 +64,33 @@
   <div class="row">
     <h1>List of Users</h1>
     <br/>
-    <table class="table table-striped table-hover table-bordered table-primary table-responsive">
-      <thead>
-      <tr>
-        <th>Firstname</th>
-        <th>Lastname</th>
-        <th>Email</th>
-        <th>Number</th>
-        <th>Action</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:each="userDto : ${userDto}">
-        <td th:text="${userDto.fullName}"></td>
-        <td th:text="${userDto.email}"></td>
-        <td th:text="${userDto.password}"></td>
-        <td th:text="${userDto.number}"></td>
-        <td>
-          <a class="btn btn-primary" th:href="@{user/{userId}/edit(userId=${userDto.id})}">Edit</a>
-          <a class="btn btn-danger" th:href="@{user/{userId}/delete(userId=${userDto.id})}">Delete</a>
-          <a class="btn btn-warning" th:href="@{user/{userId}/view(userId=${userDto.id})}">View</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+    <form method="post" action="/user/add"> <!-- Replace '/user/add' with the appropriate action URL -->
+      <table class="table table-striped table-hover table-bordered table-primary table-responsive">
+        <thead>
+        <tr>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>Email</th>
+          <th>Number</th>
+          <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="userDto : ${userDto}">
+          <td th:text="${userDto.fullName}"></td>
+          <td th:text="${userDto.email}"></td>
+          <td th:text="${userDto.password}"></td>
+          <td th:text="${userDto.number}"></td>
+          <td>
+            <a class="btn btn-primary" th:href="@{user/{userId}/edit(userId=${userDto.id})}">Edit</a>
+            <a class="btn btn-danger" th:href="@{user/{userId}/delete(userId=${userDto.id})}">Delete</a>
+            <a class="btn btn-warning" th:href="@{user/{userId}/view(userId=${userDto.id})}">View</a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-primary" type="submit">Add New User</button>
+    </form>
   </div>
 </div>
 

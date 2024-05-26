@@ -54,7 +54,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" th:href="@{/user/home}">Home</a>
+          <a class="nav-link active" aria-current="page" th:href="@{/users/home}">Home</a>
         </li>
       </ul>
     </div>
@@ -72,72 +72,34 @@
       <h2 class="text-center">Edit User</h2>
     </div>
     <div class="card-body">
-      <form
-              method="post"
-              role="form"
-              th:action="@{/user/{userId}(userId=${userDto.id})}"
-              th:object="${userDto}"
-      >
+      <form method="post" role="form" th:action="@{/user/{userId}(userId=${userDto.id})}" th:object="${userDto}">
         <div class="form-group mb-3 text-dark">
           <label class="form-label">Fullname</label>
-          <input class="form-control"
-                 id="fullName"
-                 name="fullName"
-                 placeholder="Enter fullName"
-                 type="text"
-                 th:field="*{fullName}"
-          />
-          <p th:if="${#fields.hasErrors('fullName')}" class="text-danger"
-             th:errors="*{fullName}"
-          ></p>
+          <input class="form-control" id="fullName" name="fullName" placeholder="Enter fullName" type="text" th:field="*{fullName}" />
+          <p th:if="${#fields.hasErrors('fullName')}" class="text-danger" th:errors="*{fullName}"></p>
         </div>
         <div class="form-group mb-3 text-dark">
           <label class="form-label">Email</label>
-          <input class="form-control"
-                 id="email"
-                 name="email"
-                 placeholder="Enter email"
-                 type="text"
-                 th:field="*{email}"
-          />
-          <p th:if="${#fields.hasErrors('email')}" class="text-danger"
-             th:errors="*{email}"
-          ></p>
+          <input class="form-control" id="email" name="email" placeholder="Enter email" type="text" th:field="*{email}" />
+          <p th:if="${#fields.hasErrors('email')}" class="text-danger" th:errors="*{email}"></p>
         </div>
         <div class="form-group mb-3 text-dark">
           <label class="form-label">Password</label>
-          <input class="form-control"
-                 id="password"
-                 name="password"
-                 placeholder="Enter password"
-                 type="text"
-                 th:field="*{password}"
-          />
-          <p th:if="${#fields.hasErrors('password')}" class="text-danger"
-             th:errors="*{password}"
-          ></p>
+          <input class="form-control" id="password" name="password" placeholder="Enter password" type="text" th:field="*{password}" />
+          <p th:if="${#fields.hasErrors('password')}" class="text-danger" th:errors="*{password}"></p>
         </div>
 
         <div class="form-group mb-3 text-dark">
           <label class="form-label">Number</label>
-          <input class="form-control"
-                 id="number"
-                 name="number"
-                 placeholder="Enter number"
-                 type="text"
-                 th:field="*{number}"
-          />
-          <p th:if="${#fields.hasErrors('number')}" class="text-danger"
-             th:errors="*{number}"
-          ></p>
+          <input class="form-control" id="number" name="number" placeholder="Enter number" type="text" th:field="*{number}" />
+          <p th:if="${#fields.hasErrors('number')}" class="text-danger" th:errors="*{number}"></p>
         </div>
-        <button class="btn btn-primary" type="submit">Add</button>
+        <button class="btn btn-primary" type="submit" th:href="@{user/{userId}}">Update</button>
       </form>
-
-
     </div>
   </div>
 </div>
+
 <script>
     // JavaScript for mode switch
     const modeSwitch = document.getElementById('mode-switch');

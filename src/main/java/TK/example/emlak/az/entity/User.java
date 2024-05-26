@@ -20,7 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     String fullName;
     @Column(nullable = false, unique = true)
     String number;
@@ -33,11 +33,13 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Emlak> emlak = new ArrayList<>();
 
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "role", nullable = false)
-    private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
 
 }

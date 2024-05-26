@@ -1,6 +1,5 @@
 package TK.example.emlak.az.controller;
 
-
 import TK.example.emlak.az.dto.UserDto;
 import TK.example.emlak.az.manager.UserManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ public class UserController {
         List<UserDto> userDto = manager.getAll();
         model.addAttribute("userDto", userDto);
         return "user-index";
-
     }
 
     @GetMapping("user/{userId}/delete")
@@ -45,13 +43,11 @@ public class UserController {
     @PostMapping("/users")
     public String saveUser(@ModelAttribute("user") @Validated UserDto userDto, Model model, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-
             model.addAttribute("user", userDto);
             return "user-new";
         }
         manager.saveInfo(userDto);
         return "redirect:/users";
-
     }
 
     @GetMapping("/users/home")
@@ -68,14 +64,15 @@ public class UserController {
 
     @PostMapping("user/{userId}")
     public String updateUser(@PathVariable("userId") Long id,
-                             @ModelAttribute("users") UserDto userDto,
+                             @ModelAttribute("userDto") @Validated UserDto userDto,
                              BindingResult bindingResult,
                              Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("users", userDto);
+            model.addAttribute("userDto", userDto);
             return "edit-user";
         }
+        manager.updateAndSave(userDto,id);
         return "redirect:/users";
     }
 
@@ -85,5 +82,4 @@ public class UserController {
         model.addAttribute("userDto", userDto);
         return "user-view";
     }
-
 }

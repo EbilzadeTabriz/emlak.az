@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface EmlakService {
     EmlakPageResponse getAll(int page, int count);
+    List<EmlakDto> getAll();
 
     List<EmlakDto> sortByPriceHighToLow();
 

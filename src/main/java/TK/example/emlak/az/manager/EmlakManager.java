@@ -37,6 +37,13 @@ class EmlakManager implements EmlakService {
     }
 
     @Override
+    public List<EmlakDto> getAll() {
+       List<Emlak> emlaks = emlakRepository.findAll();
+       return emlaks.stream().map(emlakMapper::toEmlakDto).toList();
+
+    }
+
+    @Override
     @Transactional
     public List<EmlakDto> sortByPriceHighToLow() {
         List<Emlak> emlakList = emlakRepository.findAll();
